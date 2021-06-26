@@ -32,6 +32,8 @@ import utils.transformed as transforms
 from data.ImageFolderDataset import MyImageFolder
 from models.HidingUNet import UnetGenerator
 from models.RevealNet import RevealNet
+from pytorch_msssim import ssim, ms_ssim, SSIM, MS_SSIM
+
 
 DATA_DIR = '/root/torch_test/dataset_50000'
 
@@ -40,7 +42,7 @@ parser.add_argument('--dataset', default="train",
                     help='train | val | test')
 parser.add_argument('--workers', type=int, default=8,
                     help='number of data loading workers')
-parser.add_argument('--batchSize', type=int, default=80,
+parser.add_argument('--batchSize', type=int, default=128,
                     help='input batch size')
 parser.add_argument('--imageSize', type=int, default=256,
                     help='the number of frames')
@@ -225,6 +227,10 @@ def main():
 
     # MSE loss
     criterion = nn.MSELoss().cuda()
+
+    #
+    criterion = SSIM(win_size=11, win_sigma=1.5, data_range=1, size_average=True)
+
     # training mode
     if opt.test == '':
         # setup optimizer
@@ -313,17 +319,17 @@ def train(train_loader, epoch, Hnet, Rnet, criterion):
         cover_imgv = Variable(cover_img)
 
         container_img = Hnet(concat_imgv)  # put concat_image into H-net and get container image
-        errH = criterion(container_img, cover_imgv)  # loss between cover and container
+        errH = 1-criterion(container_img, cover_imgv)  # loss between cover and container
         Hlosses.update(errH, this_batch_size)
 
         rev_secret_img = Rnet(container_img)  # put concatenated image into R-net and get revealed secret image
         secret_imgv = Variable(secret_img)
-        errR = criterion(rev_secret_img, secret_imgv)  # loss between secret image and revealed secret image
+        errR = 1-criterion(rev_secret_img, secret_imgv)  # loss between secret image and revealed secret image
         Rlosses.update(errR, this_batch_size)
 
         # Antiver
         rev_cover_img = Rnet(cover_img)
-        errR_ = criterion(rev_cover_img, cover_img)
+        errR_ = 1-criterion(rev_cover_img, cover_img)
         betaerrR_secret = opt.beta * (errR + errR_) / 2
         # end Antiver
 
@@ -404,15 +410,15 @@ def validation(val_loader, epoch, Hnet, Rnet, criterion):
         cover_imgv = Variable(cover_img, volatile=True)
 
         container_img = Hnet(concat_imgv)
-        errH = criterion(container_img, cover_imgv)
+        errH = 1-criterion(container_img, cover_imgv)
         Hlosses.update(errH.data[0], this_batch_size)
 
         rev_secret_img = Rnet(container_img)
         secret_imgv = Variable(secret_img, volatile=True)
-        errR = criterion(rev_secret_img, secret_imgv)
+        errR = 1-criterion(rev_secret_img, secret_imgv)
         # Antiver
         rev_cover_img = Rnet(cover_img)
-        errR += criterion(rev_cover_img, cover_imgv)
+        errR += 1-riterion(rev_cover_img, cover_imgv)
         Rlosses.update(errR.data[0] / 2, this_batch_size)
         # end Antiver
 

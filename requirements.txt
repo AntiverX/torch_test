@@ -1,3 +1,4 @@
 torch
 tensorboardX
 argparse
+pytorch-msssim
