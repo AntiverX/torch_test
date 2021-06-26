@@ -25,6 +25,7 @@ pip install gdown
 gdown https://drive.google.com/uc?id=1_aMwuZXYO8rYiBHKxxuuSjF4Mb-A3Fyr
 git clone https://github.com/AntiverX/torch_test.git
 pip install -r ./torch_test/requirements.txt
+notify-run configure https://notify.run/c/blBlCOO9fKVevql8
 mkdir ./torch_test
 mkdir ./torch_test/dataset_50000 ./torch_test/dataset_50000/train ./torch_test/dataset_50000/val
 tar -xvf ILSVRC2012_img_val_50000.tar -C ./torch_test/dataset_50000

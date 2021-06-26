@@ -33,6 +33,12 @@ from data.ImageFolderDataset import MyImageFolder
 from models.HidingUNet import UnetGenerator
 from models.RevealNet import RevealNet
 from pytorch_msssim import ssim, ms_ssim, SSIM, MS_SSIM
+from notify_run import Notify
+
+
+notify = Notify()
+notify.read_config()
+
 
 PROJECT = ""
 
@@ -320,17 +326,18 @@ def train(train_loader, epoch, Hnet, Rnet, criterion):
         cover_imgv = Variable(cover_img)
 
         container_img = Hnet(concat_imgv)  # put concat_image into H-net and get container image
-        errH = 1-criterion(container_img, cover_imgv)  # loss between cover and container
+        loss = nn.L1Loss()
+        errH = 1-criterion(container_img, cover_imgv) + loss(container_img, cover_imgv)  # loss between cover and container
         Hlosses.update(errH, this_batch_size)
 
         rev_secret_img = Rnet(container_img)  # put concatenated image into R-net and get revealed secret image
         secret_imgv = Variable(secret_img)
-        errR = 1-criterion(rev_secret_img, secret_imgv)  # loss between secret image and revealed secret image
+        errR = 1-criterion(rev_secret_img, secret_imgv) + loss(rev_secret_img, secret_imgv)  # loss between secret image and revealed secret image
         Rlosses.update(errR, this_batch_size)
 
         # Antiver
         rev_cover_img = Rnet(cover_img)
-        errR_ = 1-criterion(rev_cover_img, cover_img)
+        errR_ = 1-criterion(rev_cover_img, cover_img) + loss(rev_cover_img, cover_img)
         betaerrR_secret = opt.beta * (errR + errR_) / 2
         # end Antiver
 
@@ -411,15 +418,16 @@ def validation(val_loader, epoch, Hnet, Rnet, criterion):
         cover_imgv = Variable(cover_img, volatile=True)
 
         container_img = Hnet(concat_imgv)
-        errH = 1-criterion(container_img, cover_imgv)
+        loss = nn.L1Loss()
+        errH = 1-criterion(container_img, cover_imgv) + loss(container_img, cover_imgv)
         Hlosses.update(errH.data[0], this_batch_size)
 
         rev_secret_img = Rnet(container_img)
         secret_imgv = Variable(secret_img, volatile=True)
-        errR = 1-criterion(rev_secret_img, secret_imgv)
+        errR = 1 - criterion(rev_secret_img, secret_imgv) + loss(rev_secret_img, secret_imgv)
         # Antiver
         rev_cover_img = Rnet(cover_img)
-        errR += 1-riterion(rev_cover_img, cover_imgv)
+        errR += 1 - criterion(rev_cover_img, cover_imgv) + loss(rev_cover_img, cover_imgv)
         Rlosses.update(errR.data[0] / 2, this_batch_size)
         # end Antiver
 
@@ -565,3 +573,4 @@ if __name__ == '__main__':
     with open("time.log",'a') as f:
         f.write(datetime.datetime.now().strftime("%m/%d/%Y, %H:%M:%S"))
         f.close()
+    notify.send(f'{PROJECT} finished!')
