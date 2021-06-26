@@ -23,12 +23,15 @@ class RevealNet(nn.Module):
             nn.Conv2d(nhf, nhf * 2, 3, 1, 1),
             nn.BatchNorm2d(nhf*2),
             nn.ReLU(True),
-            nn.Conv2d(nhf * 2, nhf * 4, 3, 1, 1),
-            nn.BatchNorm2d(nhf*4),
-            nn.ReLU(True),
-            nn.Conv2d(nhf * 4, nhf * 2, 3, 1, 1),
-            nn.BatchNorm2d(nhf*2),
-            nn.ReLU(True),
+
+            # nn.Conv2d(nhf * 2, nhf * 4, 3, 1, 1),
+            # nn.BatchNorm2d(nhf*4),
+            # nn.ReLU(True),
+            #
+            # nn.Conv2d(nhf * 4, nhf * 2, 3, 1, 1),
+            # nn.BatchNorm2d(nhf*2),
+            # nn.ReLU(True),
+
             nn.Conv2d(nhf * 2, nhf, 3, 1, 1),
             nn.BatchNorm2d(nhf),
             nn.ReLU(True),
