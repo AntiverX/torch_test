@@ -34,6 +34,7 @@ from models.HidingUNet import UnetGenerator
 from models.RevealNet import RevealNet
 from pytorch_msssim import ssim, ms_ssim, SSIM, MS_SSIM
 
+PROJECT = ""
 
 DATA_DIR = '/root/torch_test/dataset_50000'
 
