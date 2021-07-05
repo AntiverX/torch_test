@@ -29,13 +29,6 @@ notify-run configure https://notify.run/c/blBlCOO9fKVevql8
 mkdir ./torch_test
 mkdir ./torch_test/dataset_50000 ./torch_test/dataset_50000/train ./torch_test/dataset_50000/val
 tar -xvf ILSVRC2012_img_val_50000.tar -C ./torch_test/dataset_50000
-cd torch_test
+cd ./torch_test
 python test.py
 curl --compressed -Ls https://github.com/labbots/google-drive-upload/raw/master/install.sh | sh -s
-
-
-
-gdown https://drive.google.com/uc?id=1iPGbr5-z2LogtMFG1rwwekV_aTubvAb2
-gdown https://drive.google.com/uc?id=1Tv4MHQzDWTUC9hRFihRhG8_jt1h0VhnR
-gdown https://drive.google.com/uc?id=1VwHAbri6y6oh8lkpZ6sSY_b1FRNnCLFL
-gdown https://drive.google.com/uc?id=1Xd4BPFy1RPmE7MEXMu77E2_xWOhR1pHW
