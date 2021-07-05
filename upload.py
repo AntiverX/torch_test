@@ -13,7 +13,8 @@ while True:
     difference = list(set(files_new) - set(files))
     if len(difference) > 0:
         process = subprocess.Popen(f"gupload {os.path.join(PATH, dirs[-1], 'trainPics', difference[0])}", shell=True, stdout=subprocess.PIPE)
-        process = subprocess.Popen(f"gupload {log[0]}", shell=True, stdout=subprocess.PIPE)
+        process.wait()
+        process = subprocess.Popen(f"gupload {os.path.join(PATH, dirs[-1], 'trainPics', log[0])}", shell=True, stdout=subprocess.PIPE)
         process.wait()
     files = files_new
     time.sleep(300)
