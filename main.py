@@ -34,6 +34,13 @@ from models.HidingUNet import UnetGenerator
 from models.RevealNet import RevealNet
 from pytorch_msssim import ssim, ms_ssim, SSIM, MS_SSIM
 from notify_run import Notify
+import random
+import numpy as np
+
+# fix random
+torch.manual_seed(0)
+random.seed(0)
+np.random.seed(0)
 
 
 notify = Notify()
