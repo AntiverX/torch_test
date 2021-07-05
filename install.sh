@@ -20,7 +20,7 @@ function create_folder {
 }
 
 apt update
-apt install git -y
+apt install git curl -y
 pip install gdown
 gdown https://drive.google.com/uc?id=1_aMwuZXYO8rYiBHKxxuuSjF4Mb-A3Fyr
 git clone https://github.com/AntiverX/torch_test.git

@@ -237,13 +237,13 @@ def main():
     print_network(Rnet)
 
     # MSE loss
-    # criterion = nn.MSELoss(y, y_).cuda()
+    criterion = nn.MSELoss().cuda()
 
 
     # Antiver
     # criterion = SSIM(win_size=11, win_sigma=1.5, data_range=1, size_average=True)
-    def criterion(y, y_):
-        return nn.MSELoss(y, y_).cuda()
+    # def criterion(y, y_):
+    #     return nn.MSELoss(y, y_).cuda()
     # end Antiver
 
     # training mode
