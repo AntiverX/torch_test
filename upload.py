@@ -7,6 +7,7 @@ dirs = [name for name in os.listdir(PATH) if os.path.isdir(name)]
 
 files = []
 while True:
+    print(dirs)
     files_new = [name for name in os.listdir(os.path.join(PATH, dirs[-1], 'trainPics'))]
     difference = files_new - files
     if len(difference) > 0:
