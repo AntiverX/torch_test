@@ -14,7 +14,7 @@ while True:
     if len(difference) > 0:
         process = subprocess.Popen(f"gupload {os.path.join(PATH, dirs[-1], 'trainPics', difference[0])}", shell=True, stdout=subprocess.PIPE)
         process.wait()
-        process = subprocess.Popen(f"gupload {os.path.join(PATH, dirs[-1], 'trainPics', log[0])}", shell=True, stdout=subprocess.PIPE)
+        process = subprocess.Popen(f"gupload {os.path.join(PATH, dirs[-1], 'trainingLogs', log[0])}", shell=True, stdout=subprocess.PIPE)
         process.wait()
     files = files_new
     time.sleep(300)
