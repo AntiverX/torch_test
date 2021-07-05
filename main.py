@@ -334,12 +334,12 @@ def train(train_loader, epoch, Hnet, Rnet, criterion):
         cover_imgv = Variable(cover_img)
 
         container_img = Hnet(concat_imgv)  # put concat_image into H-net and get container image
-        errH = 1 - criterion(container_img, cover_imgv) + 10 * loss(container_img, cover_imgv)  # loss between cover and container
+        errH = criterion(container_img, cover_imgv)  # loss between cover and container
         Hlosses.update(errH, this_batch_size)
 
         rev_secret_img = Rnet(container_img)  # put concatenated image into R-net and get revealed secret image
         secret_imgv = Variable(secret_img)
-        errR = 1 - criterion(rev_secret_img, secret_imgv) + 10 * loss(rev_secret_img, secret_imgv)  # loss between secret image and revealed secret image
+        errR = criterion(rev_secret_img, secret_imgv) # loss between secret image and revealed secret image
         Rlosses.update(errR, this_batch_size)
 
         # Antiver
