@@ -233,10 +233,14 @@ def main():
     print_network(Rnet)
 
     # MSE loss
-    criterion = nn.MSELoss().cuda()
+    # criterion = nn.MSELoss(y, y_).cuda()
 
-    #
-    criterion = SSIM(win_size=11, win_sigma=1.5, data_range=1, size_average=True)
+
+    # Antiver
+    # criterion = SSIM(win_size=11, win_sigma=1.5, data_range=1, size_average=True)
+    def criterion(y, y_):
+        return nn.MSELoss(y, y_).cuda()
+    # end Antiver
 
     # training mode
     if opt.test == '':
@@ -326,7 +330,6 @@ def train(train_loader, epoch, Hnet, Rnet, criterion):
         cover_imgv = Variable(cover_img)
 
         container_img = Hnet(concat_imgv)  # put concat_image into H-net and get container image
-        loss = nn.L1Loss()
         errH = 1 - criterion(container_img, cover_imgv) + 10 * loss(container_img, cover_imgv)  # loss between cover and container
         Hlosses.update(errH, this_batch_size)
 
@@ -337,7 +340,7 @@ def train(train_loader, epoch, Hnet, Rnet, criterion):
 
         # Antiver
         rev_cover_img = Rnet(cover_img)
-        errR_ = 1 - criterion(rev_cover_img, cover_img) + 10 * loss(rev_cover_img, cover_img)
+        errR_ = criterion(rev_cover_img, cover_img)
         betaerrR_secret = opt.beta * (errR + errR_) / 2
         # end Antiver
 
@@ -427,7 +430,7 @@ def validation(val_loader, epoch, Hnet, Rnet, criterion):
         errR = 1 - criterion(rev_secret_img, secret_imgv) + 10 * loss(rev_secret_img, secret_imgv)
         # Antiver
         rev_cover_img = Rnet(cover_img)
-        errR += 1 - criterion(rev_cover_img, cover_imgv) + 10 * loss(rev_cover_img, cover_imgv)
+        errR += criterion(rev_cover_img, cover_imgv)
         Rlosses.update(errR.data[0] / 2, this_batch_size)
         # end Antiver
 
