@@ -131,7 +131,7 @@ def save_current_codes(des_path):
     new_utils_dir_path = des_path + "/utils/"
     shutil.copytree(utils_dir, new_utils_dir_path)
 
-
+criterion_l1 = nn.L1Loss().cuda()
 def main():
     ############### define global parameters ###############
     global opt, optimizerH, optimizerR, writer, logPath, schedulerH, schedulerR, val_loader, smallestLoss
@@ -331,17 +331,17 @@ def train(train_loader, epoch, Hnet, Rnet, criterion):
         cover_imgv = Variable(cover_img)
 
         container_img = Hnet(concat_imgv)  # put concat_image into H-net and get container image
-        errH = criterion(container_img, cover_imgv)  # loss between cover and container
+        errH = criterion(container_img, cover_imgv) + criterion_l1(container_img, cover_imgv)  # loss between cover and container
         Hlosses.update(errH, this_batch_size)
 
         rev_secret_img = Rnet(container_img)  # put concatenated image into R-net and get revealed secret image
         secret_imgv = Variable(secret_img)
-        errR = criterion(rev_secret_img, secret_imgv) # loss between secret image and revealed secret image
+        errR = criterion(rev_secret_img, secret_imgv) + criterion_l1(rev_secret_img, secret_imgv) # loss between secret image and revealed secret image
         Rlosses.update(errR, this_batch_size)
 
         # Antiver
         rev_cover_img = Rnet(cover_img)
-        errR_ = criterion(rev_cover_img, cover_img)
+        errR_ = criterion(rev_cover_img, cover_img) + criterion_l1(rev_cover_img, cover_img)
         betaerrR_secret = opt.beta * (errR + errR_) / 2
         # end Antiver
 
@@ -423,15 +423,15 @@ def validation(val_loader, epoch, Hnet, Rnet, criterion):
 
         container_img = Hnet(concat_imgv)
         loss = nn.L1Loss()
-        errH = 1-criterion(container_img, cover_imgv) + 10 * loss(container_img, cover_imgv)
+        errH = criterion(container_img, cover_imgv) + criterion_l1(container_img, cover_imgv)
         Hlosses.update(errH.data[0], this_batch_size)
 
         rev_secret_img = Rnet(container_img)
         secret_imgv = Variable(secret_img, volatile=True)
-        errR = 1 - criterion(rev_secret_img, secret_imgv) + 10 * loss(rev_secret_img, secret_imgv)
+        errR = criterion(rev_secret_img, secret_imgv) + criterion_l1(rev_secret_img, secret_imgv)
         # Antiver
         rev_cover_img = Rnet(cover_img)
-        errR += criterion(rev_cover_img, cover_imgv)
+        errR += criterion(rev_cover_img, cover_imgv) + criterion_l1(rev_cover_img, cover_img)
         Rlosses.update(errR.data[0] / 2, this_batch_size)
         # end Antiver
 
