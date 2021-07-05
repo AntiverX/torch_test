@@ -219,10 +219,8 @@ def main():
     # whether to load pre-trained model
     if opt.Hnet != "":
         Hnet.load_state_dict(torch.load(opt.Hnet))
-    if opt.ngpu == 2:
-        Hnet = torch.nn.DataParallel(Hnet, [0]).cuda()
-    if opt.ngpu == 4:
-        Hnet = torch.nn.DataParallel(Hnet, [0, 1]).cuda()
+    if opt.ngpu >1:
+        Hnet = torch.nn.DataParallel(Hnet).cuda()
     print_network(Hnet)
 
     Rnet = RevealNet(output_function=nn.Sigmoid)
@@ -230,10 +228,9 @@ def main():
     Rnet.apply(weights_init)
     if opt.Rnet != '':
         Rnet.load_state_dict(torch.load(opt.Rnet))
-    if opt.ngpu == 2:
-        Rnet = torch.nn.DataParallel(Rnet, [1]).cuda()
-    if opt.ngpu == 4:
-        Rnet = torch.nn.DataParallel(Rnet, [2, 3]).cuda()
+    if opt.ngpu > 1:
+        Rnet = torch.nn.DataParallel(Rnet).cuda()
+
     print_network(Rnet)
 
     # MSE loss
