@@ -3,7 +3,7 @@ import subprocess
 
 
 PATH = "/root/torch_test/training/"
-dirs = [name for name in os.listdir(PATH) if os.path.isdir(name)]
+dirs = [name for name in os.listdir(PATH)]
 
 files = []
 while True:
